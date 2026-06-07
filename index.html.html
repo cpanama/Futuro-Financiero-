@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuro Financiero Panamá</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f1f5f9;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Ocultar barra de scroll para una experiencia de app fluida */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Animaciones */
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .animate-slide-up {
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex justify-center items-stretch">
+
+    <!-- Notificación Custom de Éxito/Alerta (Reemplazo de alert) -->
+    <div id="custom-toast" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 w-80 max-w-full bg-slate-900/95 text-white p-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-700 transition duration-300">
+        <div id="toast-icon" class="p-2 bg-blue-600 rounded-lg text-white">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <div>
+            <p id="toast-message" class="text-xs font-semibold">Mensaje de notificación del sistema.</p>
+        </div>
+    </div>
+
+    <!-- Contenedor Principal Adaptable (Simula teléfono celular premium) -->
+    <div class="w-full max-w-md bg-slate-50 flex flex-col min-h-screen relative shadow-2xl border-x border-slate-200/50 pb-20 overflow-hidden">
+
+        <!-- CABECERA DE LA APP -->
+        <header class="bg-blue-700 text-white pt-8 pb-6 px-5 rounded-b-[2rem] shadow-lg sticky top-0 z-40">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <p class="text-blue-200 text-[10px] font-extrabold uppercase tracking-widest">¡Bienvenido a!</p>
+                    <h1 class="text-2xl font-black tracking-tight">Futuro Financiero</h1>
+                </div>
+                <!-- Selector de Perfil y Usuario Activo -->
+                <div class="relative">
+                    <button onclick="toggleProfileDropdown()" class="bg-blue-600/80 hover:bg-blue-500 transition py-1.5 px-3 rounded-full flex items-center gap-2 text-xs font-bold border border-blue-400/40">
+                        <span id="current-user-avatar" class="w-6 h-6 rounded-full bg-amber-400 text-blue-900 flex items-center justify-center font-extrabold text-xs">M</span>
+                        <span id="current-user-name">Mi Perfil</span>
+                        <svg class="w-3.5 h-3.5 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <!-- Menú desplegable de usuarios -->
+                    <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-50 text-slate-800">
+                        <div class="px-4 py-2 border-b border-slate-100">
+                            <p class="text-[10px] text-slate-400 font-extrabold tracking-wider">CAMBIAR PERFIL DE USUARIO</p>
+                        </div>
+                        <div id="users-list" class="max-h-48 overflow-y-auto no-scrollbar">
+                            <!-- Inyectado mediante JS -->
+                        </div>
+                        <div class="p-2 border-t border-slate-100">
+                            <button onclick="openNewUserModal()" class="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-bold text-blue-600 hover:bg-blue-50 rounded-xl transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                Crear nuevo perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard de Progreso en Cabecera -->
+            <div class="bg-blue-800/50 backdrop-blur-md rounded-2xl p-4 border border-blue-500/20">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-bold text-blue-200">Cursos recomendados</span>
+                    <span id="header-progress-text" class="text-sm font-extrabold">0 / 3</span>
+                </div>
+                <div class="w-full bg-blue-950/40 rounded-full h-2">
+                    <div id="header-progress-bar" class="bg-amber-400 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between items-center mt-3 text-[11px] text-blue-100 font-bold">
+                    <span id="user-badge-level">Rango: Aprendiz</span>
+                    <span id="user-xp-display" class="bg-blue-900/40 px-2 py-0.5 rounded-full">XP: 0 pts</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main id="app-content" class="flex-1 px-5 py-6 overflow-y-auto no-scrollbar">
+            
+            <!-- VISTA 1: INICIO (Cursos Disponibles) -->
+            <section id="view-inicio" class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-extrabold text-slate-900">Cursos de Formación</h2>
+                    <span id="age-group-tag" class="text-[10px] bg-blue-100 text-blue-700 font-extrabold px-3 py-1 rounded-full">Jóvenes (18-25)</span>
+                </div>
+
+                <div class="p-4 bg-amber-50 border border-amber-200/60 rounded-2xl space-y-1">
+                    <p class="text-xs font-bold text-amber-800 flex items-center gap-1">
+                        ⚡ ¡Aprende y pon a prueba tu mente!
+                    </p>
+                    <p class="text-[10px] text-amber-700">Cada curso contiene lecciones diseñadas detalladamente. Lee con atención las explicaciones interactivas de 2 minutos antes de responder los quizzes.</p>
+                </div>
+
+                <!-- Lista dinámica de tarjetas de curso -->
+                <div id="courses-container" class="space-y-4">
+                    <!-- Inyectados por Javascript -->
+                </div>
+            </section>
+
+            <!-- VISTA 2: SIMULADORES FINANCIEROS -->
+            <section id="view-simular" class="hidden space-y-6">
+                <h2 class="text-lg font-extrabold text-slate-900">Herramientas y Simuladores</h2>
+                
+                <!-- Selector Horizontal Estilo iOS -->
+                <div class="grid grid-cols-3 gap-1 bg-slate-200/70 p-1 rounded-xl">
+                    <button id="btn-sim-ahorro" onclick="switchSimulator('ahorro')" class="py-2.5 text-xs font-bold rounded-lg bg-white text-slate-900 shadow-sm transition">Ahorro</button>
+                    <button id="btn-sim-presupuesto" onclick="switchSimulator('presupuesto')" class="py-2.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-950 transition">Presupuesto</button>
+                    <button id="btn-sim-credito" onclick="switchSimulator('credito')" class="py-2.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-950 transition">Crédito</button>
+                </div>
+
+                <!-- Simulador de Ahorro -->
+                <div id="sim-ahorro-panel" class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-extrabold text-slate-900 text-sm">Metas de Ahorro Panamá</h3>
+                            <p class="text-[10px] text-slate-500">¿Cuánto necesitas para lograr tu objetivo?</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">¿Cuál es tu meta de ahorro? (USD)</label>
+                            <input id="input-ahorro-meta" type="number" placeholder="Ej. 600" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:border-blue-500 transition">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">¿Cuánto vas a guardar al mes? (USD)</label>
+                            <input id="input-ahorro-mensual" type="number" placeholder="Ej. 50" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:border-blue-500 transition">
+                        </div>
+                        <button onclick="calcularAhorro()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-md shadow-blue-200">Calcular tiempo estimado</button>
+                    </div>
+                    <div id="resultado-ahorro" class="hidden p-4 bg-emerald-50/50 border border-emerald-100 rounded-2xl space-y-2">
+                        <p class="text-[10px] text-emerald-800 font-extrabold uppercase tracking-widest">Planificación estimada</p>
+                        <p class="text-xs text-slate-700 font-bold" id="txt-ahorro-meses">Te tomará 12 meses alcanzar tu meta.</p>
+                        <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                            <div class="bg-emerald-500 h-full rounded-full" style="width: 100%"></div>
+                        </div>
+                        <p class="text-[9px] text-emerald-600 font-medium">💡 Consejo: Evitar comprar comidas fuera en Panamá te puede ahorrar hasta $60 extras al mes.</p>
+                    </div>
+                </div>
+
+                <!-- Simulador de Presupuesto -->
+                <div id="sim-presupuesto-panel" class="hidden bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-blue-50 text-blue-600 rounded-xl">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.003 9.003 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-extrabold text-slate-900 text-sm">Distribución de Presupuesto</h3>
+                            <p class="text-[10px] text-slate-500">Aplica la regla financiera saludable 50/30/20</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Ingresos mensuales totales (USD)</label>
+                            <input id="input-presupuesto-ingreso" type="number" placeholder="Ej. 800" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:border-blue-500 transition">
+                        </div>
+                        <button onclick="calcularPresupuesto()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-md">Distribuir mis ingresos</button>
+                    </div>
+                    <div id="resultado-presupuesto" class="hidden p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                        <p class="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest">Tu distribución sugerida:</p>
+                        
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-bold">
+                                <span class="text-slate-600">Necesidades (50%)</span>
+                                <span id="txt-presupuesto-necesidades" class="text-blue-600">$0.00</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                <div class="bg-blue-600 h-full rounded-full" style="width: 50%"></div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-bold">
+                                <span class="text-slate-600">Deseos (30%)</span>
+                                <span id="txt-presupuesto-deseos" class="text-amber-600">$0.00</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                <div class="bg-amber-500 h-full rounded-full" style="width: 30%"></div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-bold">
+                                <span class="text-slate-600">Ahorro e Inversión (20%)</span>
+                                <span id="txt-presupuesto-ahorro" class="text-emerald-600">$0.00</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                <div class="bg-emerald-500 h-full rounded-full" style="width: 20%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulador de Crédito -->
+                <div id="sim-credito-panel" class="hidden bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-rose-50 text-rose-600 rounded-xl">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-extrabold text-slate-900 text-sm">Cálculo de Cuota de Crédito</h3>
+                            <p class="text-[10px] text-slate-500">Conoce el impacto de las tasas en Panamá</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Monto solicitado (USD)</label>
+                            <input id="input-credito-monto" type="number" placeholder="Ej. 1500" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:border-blue-500 transition">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Plazo (Meses)</label>
+                            <input id="input-credito-plazo" type="number" placeholder="Ej. 12" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:border-blue-500 transition">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Tasa de interés anual (%)</label>
+                            <input id="input-credito-interes" type="number" placeholder="Ej. 15" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:border-blue-500 transition">
+                        </div>
+                        <button onclick="calcularCredito()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-md">Analizar cuotas</button>
+                    </div>
+                    <div id="resultado-credito" class="hidden p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                        <p class="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest">Resultado del análisis:</p>
+                        <div class="flex justify-between items-center py-1">
+                            <span class="text-xs text-slate-600">Cuota mensual estimada:</span>
+                            <span id="txt-credito-cuota" class="font-extrabold text-slate-900">$0.00</span>
+                        </div>
+                        <div class="flex justify-between items-center py-1 border-t border-slate-100">
+                            <span class="text-xs text-slate-600">Total intereses a pagar:</span>
+                            <span id="txt-credito-intereses-totales" class="font-bold text-rose-600">$0.00</span>
+                        </div>
+                        <div id="alerta-endeudamiento" class="p-3 rounded-xl text-[10px] font-bold">
+                            <!-- Alerta de riesgo dinámico -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VISTA 3: PROGRESO -->
+            <section id="view-progreso" class="hidden space-y-6">
+                <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-5">
+                    <h2 class="text-lg font-extrabold text-slate-900">Tu Historial de Formación</h2>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-blue-50 border border-blue-100 p-4 rounded-2xl text-center">
+                            <p class="text-2xl font-black text-blue-700" id="stats-xp">0</p>
+                            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">XP Acumulado</p>
+                        </div>
+                        <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl text-center">
+                            <p class="text-2xl font-black text-emerald-700" id="stats-quizzes">0/3</p>
+                            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Cursos Listos</p>
+                        </div>
+                    </div>
+
+                    <!-- Medallas -->
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">Medallas Obtenidas</h4>
+                        <div id="badges-container" class="flex flex-wrap gap-2">
+                            <!-- Inyectados por JS -->
+                        </div>
+                    </div>
+
+                    <!-- Certificación oficial -->
+                    <div class="pt-4 border-t border-slate-100">
+                        <h4 class="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">Certificado Oficial</h4>
+                        <div id="panel-certificado" class="bg-slate-50 border border-dashed border-slate-300 rounded-2xl p-4 text-center">
+                            <p class="text-xs text-slate-500 font-medium leading-relaxed">Completa los 3 cursos obligatorios del módulo recomendados para tu rango de edad para desbloquear tu certificado oficial.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VISTA 4: AJUSTES -->
+            <section id="view-config" class="hidden space-y-6">
+                <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-5">
+                    <h2 class="text-lg font-extrabold text-slate-900">Ajustes del Perfil</h2>
+                    
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Nombre del Estudiante</label>
+                        <input id="input-config-name" type="text" oninput="updateProfileName()" class="w-full mt-1.5 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:border-blue-500 transition">
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Público Objetivo (Adapta Cursos)</label>
+                        <div class="grid grid-cols-3 gap-2 mt-2">
+                            <button onclick="setAgeGroup('nino')" id="btn-age-nino" class="py-2.5 text-xs font-bold rounded-lg border text-slate-500 transition">Niños (10-13)</button>
+                            <button onclick="setAgeGroup('adolescente')" id="btn-age-adolescente" class="py-2.5 text-xs font-bold rounded-lg border text-slate-500 transition">Jóvenes (14-17)</button>
+                            <button onclick="setAgeGroup('joven')" id="btn-age-joven" class="py-2.5 text-xs font-bold rounded-lg border text-slate-500 transition">Adultos (18-25)</button>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 text-center">
+                        <button onclick="resetCurrentUserProgress()" class="text-xs font-bold text-rose-600 hover:text-rose-700 transition">Restablecer todo el progreso</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- VISUALIZADOR INMERSIVO DE CURSOS (Multipaso) -->
+        <div id="course-player" class="hidden absolute inset-0 bg-white z-50 flex flex-col">
+            <!-- Cabecera del reproductor de curso -->
+            <div class="bg-slate-50 border-b border-slate-100 px-5 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <button onclick="exitCoursePlayer()" class="text-slate-400 hover:text-slate-600 p-1">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <div>
+                        <h4 id="player-course-title" class="font-bold text-slate-900 text-xs">Curso</h4>
+                        <p id="player-progress-subtitle" class="text-[10px] font-bold text-blue-600">Lección 1 de 3</p>
+                    </div>
+                </div>
+                <!-- Barra de progreso superior -->
+                <div class="w-24 bg-slate-200 h-2 rounded-full overflow-hidden">
+                    <div id="player-progress-bar" class="bg-blue-600 h-full rounded-full transition-all" style="width: 33%"></div>
+                </div>
+            </div>
+
+            <!-- Contenedor del contenido deslizante de lecciones -->
+            <div id="player-content" class="flex-1 overflow-y-auto px-5 py-6 space-y-5 no-scrollbar">
+                
+                <!-- Área de lectura educativa interactiva (Al menos 2 minutos de valor real) -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 text-xs font-bold text-blue-600 uppercase tracking-widest">
+                        <span>📚 Lección interactiva</span>
+                        <span class="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
+                        <span id="player-read-time" class="text-[10px] text-slate-400">Lectura: 2.5 min</span>
+                    </div>
+                    
+                    <h3 id="player-lesson-title" class="text-lg font-extrabold text-slate-900">Lección</h3>
+                    
+                    <!-- Explicación formativa amplia -->
+                    <div id="player-lesson-body" class="text-xs text-slate-600 leading-relaxed font-medium space-y-3">
+                        <!-- Inyectado por JS -->
+                    </div>
+                </div>
+
+                <!-- Actividad interactiva o Cuestionario -->
+                <div class="pt-5 border-t border-slate-100 space-y-4">
+                    <div class="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 space-y-2">
+                        <p class="text-[10px] font-extrabold text-blue-700 uppercase tracking-wider">Actividad Interactiva</p>
+                        <p id="player-quiz-question" class="text-xs font-bold text-slate-800">Pregunta</p>
+                    </div>
+
+                    <!-- Lista de opciones -->
+                    <div id="player-quiz-options" class="space-y-2.5">
+                        <!-- Inyectadas por JS -->
+                    </div>
+
+                    <!-- Retroalimentación dinámica del Quiz -->
+                    <div id="player-quiz-feedback" class="hidden p-4 rounded-2xl text-xs font-bold">
+                        <!-- Comentarios correctos/incorrectos -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botonera inferior de control del reproductor -->
+            <div class="bg-slate-50 border-t border-slate-100 p-4">
+                <button id="btn-player-action" onclick="handlePlayerAction()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-xs transition shadow-lg shadow-blue-100 flex items-center justify-center gap-1">
+                    Comprobar Respuesta
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- BARRA DE NAVEGACIÓN INFERIOR (Glide/Thunkable Look) -->
+        <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-3 z-40 rounded-t-3xl shadow-2xl">
+            <button onclick="switchTab('inicio')" id="tab-inicio" class="flex flex-col items-center gap-1 text-blue-600 transition">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+                <span class="text-[10px] font-extrabold tracking-tight">Inicio</span>
+            </button>
+            <button onclick="switchTab('simular')" id="tab-simular" class="flex flex-col items-center gap-1 text-slate-400 transition">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg>
+                <span class="text-[10px] font-extrabold tracking-tight">Simular</span>
+            </button>
+            <button onclick="switchTab('progreso')" id="tab-progreso" class="flex flex-col items-center gap-1 text-slate-400 transition">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path></svg>
+                <span class="text-[10px] font-extrabold tracking-tight">Progreso</span>
+            </button>
+            <button onclick="switchTab('config')" id="tab-config" class="flex flex-col items-center gap-1 text-slate-400 transition">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
+                <span class="text-[10px] font-extrabold tracking-tight">Ajustes</span>
+            </button>
+        </nav>
+
+        <!-- MODAL: CREAR NUEVO USUARIO -->
+        <div id="new-user-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex justify-center items-center p-4">
+            <div class="w-full max-w-xs bg-white rounded-3xl p-6 space-y-4 shadow-2xl border border-slate-100">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-extrabold text-slate-900 text-base">Nuevo Perfil</h3>
+                    <button onclick="closeNewUserModal()" class="text-slate-400 hover:text-slate-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nombre del Estudiante</label>
+                    <input id="new-user-name-input" type="text" placeholder="Ej. Ana, Juan..." class="w-full mt-1.5 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:border-blue-500 transition">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nivel Educativo</label>
+                    <select id="new-user-age-select" class="w-full mt-1.5 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:border-blue-500 transition">
+                        <option value="nino">Niños (10-13 años)</option>
+                        <option value="adolescente">Jóvenes (14-17 años)</option>
+                        <option value="joven" selected>Adultos (18-25 años)</option>
+                    </select>
+                </div>
+                <button onclick="createNewUser()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-xs transition">Crear Perfil</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Lógica de Datos e Interacciones -->
+    <script>
+        // CURSOS CON CONTENIDO AMPLIO (Lectura estimada de al menos 2 minutos por lección)
+        const coursesData = [
+            {
+                id: 1,
+                title: "Presupuesto Personal",
+                difficulty: "Principiante",
+                duration: "2 horas",
+                lessonsCount: "3 Módulos",
+                category: "presupuesto",
+                ageGroup: ["nino", "adolescente", "joven"],
+                lessons: [
+                    {
+                        title: "Módulo 1: Controlar tus Ingresos y Gastos",
+                        readTime: "Lectura: ~2.5 min",
+                        paragraphs: [
+                            "Un presupuesto es, de forma simple, un registro escrito que muestra la diferencia exacta entre el dinero que entra a tus manos (Ingresos) y el dinero que decides gastar (Gastos). En Panamá, conocer el costo promedio de las cosas es crucial: la canasta básica familiar supera los $300 mensuales, por lo que planificar cada balboa cuenta de verdad.",
+                            "Tus ingresos pueden provenir de un salario fijo, trabajos informales, o una mesada en el caso de los niños y adolescentes. Por el contrario, tus gastos se dividen en fijos (los que tienes que pagar obligatoriamente de forma mensual, como el transporte hacia la escuela o universidad, la comida, o el plan de datos) y variables (los que dependen de tus gustos, como comprar sodas, ir al cine con amigos o pedir comida a domicilio).",
+                            "La regla más importante del presupuesto es no gastar nunca más de lo que ganas. Cuando gastas más de lo que ingresas, te ves obligado a pedir prestado o a acumular deudas que en el futuro dañarán tu tranquilidad emocional. Llevar un registro diario te permite saber con precisión a dónde va tu dinero."
+                        ],
+                        question: "¿Cuál es la diferencia principal entre un gasto fijo y un gasto variable?",
+                        options: [
+                            "El gasto fijo se paga obligatoriamente todos los meses, mientras que el variable depende de antojos y situaciones temporales.",
+                            "El gasto fijo es siempre más barato que el gasto variable.",
+                            "El gasto variable es el que se paga únicamente con tarjetas de crédito panameñas."
+                        ],
+                        correctAnswer: 0
+                    },
+                    {
+                        title: "Módulo 2: La Famosa Regla 50/30/20",
+                        readTime: "Lectura: ~2.0 min",
+                        paragraphs: [
+                            "¿Cómo organizar tus ingresos sin volverte loco? Los expertos en finanzas de todo el mundo recomiendan usar la famosa regla de distribución del 50/30/20. Esta regla te ayuda a dividir tu dinero neto de forma inteligente en tres categorías fijas de una manera sencilla y visual.",
+                            "El 50% de tus ingresos debe destinarse únicamente a cubrir tus NECESIDADES. Esto incluye todo aquello sin lo cual no puedes sobrevivir o realizar tus actividades esenciales (comida básica, pasajes del Metrobús o Línea del Metro, alquiler de vivienda y servicios de luz o agua).",
+                            "El 30% se destina a tus DESEOS. Aquí se ubica el entretenimiento, salir al centro comercial Albrook Mall, comprar ropa de marca o comer en restaurantes. Finalmente, el 20% RESTANTE se debe ahorrar de inmediato. Este dinero te servirá para crear un colchón contra imprevistos o cumplir metas futuras."
+                        ],
+                        question: "Si una persona en Panamá gana $600 al mes, ¿cuánto debería ahorrar siguiendo la regla 50/30/20?",
+                        options: [
+                            "Debería ahorrar $300 mensuales (50%).",
+                            "Debería ahorrar $120 mensuales (20%).",
+                            "Debería ahorrar $180 mensuales (30%)."
+                        ],
+                        correctAnswer: 1
+                    },
+                    {
+                        title: "Módulo 3: Detener los Temibles Gastos Hormiga",
+                        readTime: "Lectura: ~2.0 min",
+                        paragraphs: [
+                            "Los gastos hormiga son pequeñas compras diarias que parecen insignificantes al momento de pagarlas, pero que al sumarlas al final del mes representan una gran pérdida de dinero. Son silenciosos y destruyen cualquier presupuesto.",
+                            "En Panamá, ejemplos muy comunes de gastos hormiga son: comprar una botella de agua todos los días en la calle en vez de llevar un termo reutilizable, el cafecito diario de camino a clases, comprar snacks en la tiendita o pagar suscripciones de plataformas de streaming que casi no usas.",
+                            "Supongamos que gastas $3 al día en snacks y bebidas en la calle. Multiplicado por 30 días, son $90 mensuales que podrías haber usado para abrir una cuenta de ahorros o financiar un proyecto personal. Detectarlos y reducirlos a la mitad liberará tu dinero de forma automática."
+                        ],
+                        question: "¿Qué es un 'gasto hormiga' y por qué afecta tus finanzas personales?",
+                        options: [
+                            "Un gasto extremadamente grande que haces una vez al año como comprar un boleto de avión.",
+                            "Una compra pequeña que se hace diariamente de manera casi inconsciente y que suma una gran cantidad al final del mes.",
+                            "El dinero que destinas para la fumigación e higiene de tu casa."
+                        ],
+                        correctAnswer: 1
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Aprende a Ahorrar",
+                difficulty: "Principiante",
+                duration: "2 horas",
+                lessonsCount: "3 Módulos",
+                category: "ahorro",
+                ageGroup: ["nino", "adolescente", "joven"],
+                lessons: [
+                    {
+                        title: "Módulo 1: El Hábito del Ahorro Primero",
+                        readTime: "Lectura: ~2.5 min",
+                        paragraphs: [
+                            "Mucha gente piensa erróneamente que ahorrar es 'guardar lo que te sobra' después de gastar todo lo que querías. Si aplicas esa lógica, la triste realidad es que nunca te va a sobrar dinero. El verdadero ahorro consiste en pagarte a ti mismo primero.",
+                            "Esto significa que, en el instante en que recibes tus ingresos (sea salario, mesada o un pago extra), separas inmediatamente una porción fija (por ejemplo, el 10% o 20%) y la depositas en un lugar seguro (como una cuenta bancaria o alcancía cerrada). El dinero restante es el que utilizarás para tus gastos del mes.",
+                            "En Panamá existen cuentas de ahorro que te pagan intereses por mantener tu dinero guardado. El hábito de separar dinero antes de gastarlo entrena a tu mente para vivir de forma organizada y te prepara para enfrentar el futuro con tranquilidad."
+                        ],
+                        question: "¿Qué significa realmente la estrategia financiera de 'pagarte a ti mismo primero'?",
+                        options: [
+                            "Gastar tu dinero en ropa y gustos antes de pagar tus deudas obligatorias.",
+                            "Separar un porcentaje fijo de tu dinero para ahorrarlo inmediatamente apenas recibes tus ingresos.",
+                            "Pedirle un aumento de sueldo a tu jefe todos los fines de semana."
+                        ],
+                        correctAnswer: 1
+                    },
+                    {
+                        title: "Módulo 2: Creando Metas Inteligentes",
+                        readTime: "Lectura: ~2.0 min",
+                        paragraphs: [
+                            "Ahorrar 'por ahorrar' puede ser muy aburrido y difícil de mantener en el tiempo. Para tener éxito y motivación constante, tus ahorros deben tener un propósito claro y emocionante. Aquí es donde entran las metas de ahorro inteligentes.",
+                            "Tus metas deben ser específicas y tener una fecha de entrega clara. Por ejemplo, en lugar de decir 'quiero ahorrar para una computadora', debes definir: 'quiero ahorrar $400 en 8 meses para comprar una computadora específica'. De esta forma, sabes exactamente cuánto debes guardar al mes ($50).",
+                            "Tener metas a corto plazo (comprar un libro en 1 mes), mediano plazo (comprar una consola en 6 meses) y largo plazo (estudios universitarios o un fondo de retiro) te dará la disciplina necesaria para resistir las tentaciones de compras impulsivas del día a día."
+                        ],
+                        question: "Para que una meta de ahorro sea verdaderamente efectiva, ¿cuál de las siguientes opciones es fundamental?",
+                        options: [
+                            "Que no tenga fecha de entrega fija para no estresarte.",
+                            "Que tenga un monto específico y una fecha de cumplimiento bien establecida.",
+                            "Que dependa de que alguien te regale el dinero al final."
+                        ],
+                        correctAnswer: 1
+                    },
+                    {
+                        title: "Módulo 3: Tu Escudo de Emergencias",
+                        readTime: "Lectura: ~2.0 min",
+                        paragraphs: [
+                            "La vida está llena de imprevistos que no podemos controlar: el teléfono se cae y se rompe la pantalla, te enfermas de un virus y requieres medicamentos fuera de presupuesto, o se daña la tubería de tu casa. Para sobrevivir a estas situaciones sin endeudarte, necesitas un Fondo de Emergencia.",
+                            "Un Fondo de Emergencia es un dinero reservado exclusivamente para cubrir problemas urgentes, reales e inesperados. No es para ir a comprar boletos de conciertos, ni para paseos imprevistos de fin de semana con amigos.",
+                            "Los expertos recomiendan que tu fondo cubra entre 3 y 6 meses de tus gastos básicos. Si eres joven, empezar con un fondo de $100 o $200 hará una diferencia inmensa en tu salud mental y estabilidad ante cualquier percance diario."
+                        ],
+                        question: "¿Cuál es el propósito exclusivo de un Fondo de Emergencia?",
+                        options: [
+                            "Financiar las compras navideñas e imprevistos de diversión nocturna.",
+                            "Afrontar gastos urgentes, inesperados y reales como daños domésticos o emergencias médicas.",
+                            "Prestarle dinero a tus amigos para que compren videojuegos."
+                        ],
+                        correctAnswer: 1
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "Tarjetas de Crédito Seguras",
+                difficulty: "Intermedio",
+                duration: "2.5 horas",
+                lessonsCount: "3 Módulos",
+                category: "credito",
+                ageGroup: ["adolescente", "joven"],
+                lessons: [
+                    {
+                        title: "Módulo 1: El Crédito no es Dinero Extra",
+                        readTime: "Lectura: ~2.5 min",
+                        paragraphs: [
+                            "La tarjeta de crédito es una de las herramientas más malentendidas por los jóvenes panameños. Muchos la ven como dinero adicional que el banco les regala, pero la realidad es muy diferente: una tarjeta de crédito es una línea de préstamo a corto plazo.",
+                            "Cuando usas una tarjeta de crédito, el banco paga por ti en ese momento, y tú te comprometes formalmente a devolver ese dinero en una fecha futura. Si pagas el total de lo que gastaste antes de tu fecha límite mensual, el banco no te cobrará intereses.",
+                            "El secreto de la tarjeta de crédito es usarla para pagar las cosas que ya presupuestaste (como tu comida o transporte) y usar el efectivo que tienes guardado en tu cuenta para pagar la tarjeta de inmediato. Así acumulas puntos o beneficios gratis sin endeudarte."
+                        ],
+                        question: "La tarjeta de crédito se considera financieramente como:",
+                        options: [
+                            "Un dinero extra de libre disposición de regalo por ser buen cliente.",
+                            "Un préstamo a corto plazo que estás obligado a pagar al banco.",
+                            "Una cuenta de ahorros secreta."
+                        ],
+                        correctAnswer: 1
+                    },
+                    {
+                        title: "Módulo 2: Tu Historial en Panamá (APC)",
+                        readTime: "Lectura: ~2.0 min",
+                        paragraphs: [
+                            "En Panamá existe una entidad muy importante llamada APC (Asociación Panameña de Crédito / Intelidat). La APC se encarga de recopilar el historial de cómo pagas tus cuentas de luz, telefonía celular, préstamos y tarjetas de crédito.",
+                            "Cada vez que pagas a tiempo, tu puntuación (Score de crédito) sube, mostrándote como un cliente responsable. Si te atrasas o dejas de pagar, tu puntuación baja de inmediato en el sistema.",
+                            "Un buen historial crediticio en la APC es tu pase de entrada para lograr metas grandes en tu vida de adulto, como conseguir la aprobación para un préstamo de automóvil, un crédito de estudios universitarios, o la hipoteca para comprar tu primer apartamento."
+                        ],
+                        question: "¿Por qué es tan importante mantener un buen historial crediticio en la APC en Panamá?",
+                        options: [
+                            "Te permite comprar productos de forma gratuita en cualquier tienda.",
+                            "Facilita la aprobación de préstamos grandes futuros como automóviles o viviendas con bajas tasas de interés.",
+                            "Te exonera de pagar el impuesto ITBMS (7%) en Panamá."
+                        ],
+                        correctAnswer: 1
+                    },
+                    {
+                        title: "Módulo 3: El Peligro del Pago Mínimo",
+                        readTime: "Lectura: ~2.5 min",
+                        paragraphs: [
+                            "Cuando llega el estado de cuenta de tu tarjeta de crédito, verás dos montos: el 'Pago de Contado' (el total de tu deuda) y el 'Pago Mínimo' (una pequeña fracción de tu deuda). Caer en la tentación de pagar solo el mínimo es un grave error financiero.",
+                            "Si pagas solo el mínimo, el banco te cobrará intereses muy altos sobre el saldo restante. Con el tiempo, tu deuda crecerá rápidamente debido al interés compuesto, creando una bola de nieve incontrolable que te tomará años liquidar.",
+                            "Para mantener unas finanzas saludables, sé siempre un cliente totalero: paga el saldo total todos los meses para evitar que el banco te cobre intereses y así aprovechar al máximo las herramientas crediticias sin caer en la trampa del endeudamiento irresponsable."
+                        ],
+                        question: "¿Qué sucede si una persona decide realizar únicamente el 'Pago Mínimo' de su tarjeta de crédito todos los meses?",
+                        options: [
+                            "El banco le cancelará la deuda automáticamente al cabo de un año.",
+                            "La deuda pendiente generará altos intereses mensuales, creando una bola de nieve difícil de pagar en el futuro.",
+                            "El puntaje crediticio de la persona aumentará al máximo nivel permitido en Panamá."
+                        ],
+                        correctAnswer: 1
+                    }
+                ]
+            }
+        ];
+
+        // Usuarios y almacenamiento
+        let users = [
+            { id: "u1", name: "Gabriel", ageGroup: "joven", xp: 100, completedCourses: [1], badges: ["Planificador Financiero"] },
+            { id: "u2", name: "Isabella", ageGroup: "adolescente", xp: 0, completedCourses: [], badges: [] }
+        ];
+        let currentUser = users[0];
+
+        // Estado del Reproductor de Cursos
+        let activeCourse = null;
+        let currentLessonIndex = 0;
+        let selectedOption = null;
+
+        // Estado de Pestañas
+        let activeTab = "inicio";
+        let activeSimulator = "ahorro";
+
+        // Al iniciar
+        window.onload = function() {
+            const savedUsers = localStorage.getItem("futuro_panama_users");
+            const savedUid = localStorage.getItem("futuro_panama_uid");
+            if (savedUsers) {
+                users = JSON.parse(savedUsers);
+            }
+            if (savedUid) {
+                currentUser = users.find(u => u.id === savedUid) || users[0];
+            } else {
+                currentUser = users[0];
+            }
+            renderUsersList();
+            renderApp();
+        }
+
+        // Custom Notification (Toast)
+        function showToast(message, isSuccess = true) {
+            const toast = document.getElementById("custom-toast");
+            const toastMsg = document.getElementById("toast-message");
+            const toastIcon = document.getElementById("toast-icon");
+
+            toastMsg.innerText = message;
+            if (isSuccess) {
+                toastIcon.className = "p-2 bg-emerald-600 rounded-lg text-white";
+                toastIcon.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>`;
+            } else {
+                toastIcon.className = "p-2 bg-rose-600 rounded-lg text-white";
+                toastIcon.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>`;
+            }
+
+            toast.classList.remove("hidden");
+            setTimeout(() => {
+                toast.classList.add("hidden");
+            }, 3500);
+        }
+
+        function toggleProfileDropdown() {
+            document.getElementById("profile-dropdown").classList.toggle("hidden");
+        }
+
+        function renderUsersList() {
+            const listContainer = document.getElementById("users-list");
+            listContainer.innerHTML = "";
+            users.forEach(user => {
+                const isSelected = user.id === currentUser.id;
+                const opt = document.createElement("button");
+                opt.className = `w-full text-left px-4 py-2.5 text-xs flex items-center justify-between hover:bg-slate-50 transition ${isSelected ? 'bg-blue-50 font-bold text-blue-700' : 'text-slate-700'}`;
+                opt.onclick = () => { selectUser(user.id); };
+                const initial = user.name ? user.name.charAt(0).toUpperCase() : "U";
+                opt.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-bold">${initial}</span>
+                        <span>${user.name}</span>
+                    </div>
+                    <span class="text-[9px] text-slate-400 font-bold uppercase">${user.ageGroup === 'nino' ? 'Niño' : user.ageGroup === 'adolescente' ? 'Joven' : 'Adulto'}</span>
+                `;
+                listContainer.appendChild(opt);
+            });
+        }
+
+        function selectUser(userId) {
+            currentUser = users.find(u => u.id === userId);
+            localStorage.setItem("futuro_panama_uid", currentUser.id);
+            document.getElementById("profile-dropdown").classList.add("hidden");
+            renderUsersList();
+            renderApp();
+            showToast(`Perfil cambiado a: ${currentUser.name}`);
+        }
+
+        function openNewUserModal() {
+            document.getElementById("profile-dropdown").classList.add("hidden");
+            document.getElementById("new-user-modal").classList.remove("hidden");
+        }
+
+        function closeNewUserModal() {
+            document.getElementById("new-user-modal").classList.add("hidden");
+        }
+
+        function createNewUser() {
+            const nameInput = document.getElementById("new-user-name-input");
+            const ageSelect = document.getElementById("new-user-age-select");
+            const name = nameInput.value.trim();
+            if (!name) return;
+
+            const newUser = {
+                id: "u_" + Date.now(),
+                name: name,
+                ageGroup: ageSelect.value,
+                xp: 0,
+                completedCourses: [],
+                badges: []
+            };
+
+            users.push(newUser);
+            currentUser = newUser;
+            nameInput.value = "";
+            saveState();
+            closeNewUserModal();
+            renderUsersList();
+            renderApp();
+            showToast(`¡Perfil ${name} creado con éxito!`);
+        }
+
+        function saveState() {
+            localStorage.setItem("futuro_panama_users", JSON.stringify(users));
+            localStorage.setItem("futuro_panama_uid", currentUser.id);
+        }
+
+        // RENDERIZADOR GENERAL DE LA APP
+        function renderApp() {
+            document.getElementById("current-user-name").innerText = currentUser.name;
+            document.getElementById("current-user-avatar").innerText = currentUser.name ? currentUser.name.charAt(0).toUpperCase() : "U";
+
+            // Cursos recomendados para el usuario actual
+            const userCourses = coursesData.filter(c => c.ageGroup.includes(currentUser.ageGroup));
+            const totalToComplete = userCourses.length;
+            const completedForAge = userCourses.filter(c => currentUser.completedCourses.includes(c.id)).length;
+
+            document.getElementById("header-progress-text").innerText = `${completedForAge} / ${totalToComplete}`;
+            const progressPercent = totalToComplete > 0 ? (completedForAge / totalToComplete) * 100 : 0;
+            document.getElementById("header-progress-bar").style.width = `${progressPercent}%`;
+
+            // Rango de XP
+            let level = "Aprendiz Financiero";
+            if (currentUser.xp >= 300) level = "Inversor Avanzado";
+            else if (currentUser.xp >= 150) level = "Planificador Financiero";
+            document.getElementById("user-badge-level").innerText = `Rango: ${level}`;
+            document.getElementById("user-xp-display").innerText = `XP: ${currentUser.xp} pts`;
+
+            // Tag del grupo de edad
+            const ageGroupLabels = {
+                nino: "Niños (10-13 años)",
+                adolescente: "Jóvenes (14-17 años)",
+                joven: "Adultos (18-25 años)"
+            };
+            document.getElementById("age-group-tag").innerText = ageGroupLabels[currentUser.ageGroup];
+
+            // Renderizar tarjetas de curso
+            renderCourses(userCourses);
+
+            // Vista de progreso
+            document.getElementById("stats-xp").innerText = currentUser.xp;
+            document.getElementById("stats-quizzes").innerText = `${completedForAge}/${totalToComplete}`;
+
+            // Medallas
+            const badgesContainer = document.getElementById("badges-container");
+            badgesContainer.innerHTML = "";
+            if (currentUser.badges.length === 0) {
+                badgesContainer.innerHTML = `<span class="text-xs text-slate-400 italic font-medium">Completa las lecciones para ganar medallas.</span>`;
+            } else {
+                currentUser.badges.forEach(b => {
+                    const item = document.createElement("span");
+                    item.className = "bg-amber-100 text-amber-800 border border-amber-200 text-[10px] font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm";
+                    item.innerHTML = `⭐ ${b}`;
+                    badgesContainer.appendChild(item);
+                });
+            }
+
+            // Certificado de logro
+            const panelCertificado = document.getElementById("panel-certificado");
+            if (completedForAge >= totalToComplete && totalToComplete > 0) {
+                panelCertificado.innerHTML = `
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 p-4 rounded-2xl text-center space-y-3">
+                        <div class="inline-flex p-2.5 bg-amber-100 text-amber-600 rounded-full">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path></svg>
+                        </div>
+                        <div>
+                            <h5 class="font-extrabold text-slate-900 text-xs">¡Excelente, ${currentUser.name}!</h5>
+                            <p class="text-[10px] text-slate-500 mt-1 leading-normal">Has completado todo el plan formativo para tu edad.</p>
+                        </div>
+                        <button onclick="descargarCertificado()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-2 rounded-xl text-[10px] transition shadow-md shadow-blue-100 flex items-center justify-center gap-1.5">
+                            Ver Certificado de Logro
+                        </button>
+                    </div>
+                `;
+            } else {
+                panelCertificado.innerHTML = `
+                    <p class="text-[10px] text-slate-500 font-medium leading-relaxed">Completa todos los cursos recomendados (${completedForAge}/${totalToComplete}) para desbloquear tu certificado oficial.</p>
+                `;
+            }
+
+            // Pestaña de ajustes
+            document.getElementById("input-config-name").value = currentUser.name;
+            updateAgeGroupButtons();
+        }
+
+        // Renderizar cursos en la pantalla de inicio
+        function renderCourses(courses) {
+            const container = document.getElementById("courses-container");
+            container.innerHTML = "";
+
+            courses.forEach(c => {
+                const isCompleted = currentUser.completedCourses.includes(c.id);
+                const card = document.createElement("div");
+                card.className = `bg-white rounded-2xl border ${isCompleted ? 'border-emerald-200' : 'border-slate-100'} p-5 shadow-sm space-y-4 hover:border-blue-200 transition relative`;
+                
+                let themeColor = "#3b82f6"; // Azul
+                if (c.category === "ahorro") themeColor = "#10b981"; // Verde
+                if (c.category === "credito") themeColor = "#f43f5e"; // Rosa
+
+                card.style.borderTopWidth = "4px";
+                card.style.borderTopColor = themeColor;
+
+                card.innerHTML = `
+                    <div class="flex items-start gap-4">
+                        <div class="p-3 bg-slate-50 rounded-2xl">
+                            ${getCategoryIcon(c.category)}
+                        </div>
+                        <div class="space-y-1.5 flex-1">
+                            <h3 class="font-extrabold text-slate-900 text-sm leading-tight">${c.title}</h3>
+                            <p class="text-[11px] text-slate-500 leading-normal">Curso interactivo de ${c.lessons.length} módulos enfocados.</p>
+                            
+                            <!-- Badges del curso -->
+                            <div class="flex flex-wrap items-center gap-2 pt-1">
+                                <span class="text-[9px] font-extrabold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">${c.difficulty}</span>
+                                <span class="text-[9px] text-slate-400 font-bold flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    ${c.duration}
+                                </span>
+                                <span class="text-[9px] text-slate-400 font-bold flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                    ${c.lessonsCount}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-3 border-t border-slate-50">
+                        ${isCompleted ? `
+                            <span class="text-[10px] font-extrabold text-emerald-600 flex items-center gap-1">
+                                <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                Completado (+100 XP)
+                            </span>
+                        ` : `
+                            <span></span>
+                        `}
+                        <button onclick="startCourse(${c.id})" class="text-[10px] font-extrabold text-blue-600 hover:text-blue-800 flex items-center gap-0.5">
+                            ${isCompleted ? 'Repasar Lecciones' : 'Empezar Curso'}
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Icono de categoría
+        function getCategoryIcon(cat) {
+            if (cat === "presupuesto") {
+                return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>`;
+            } else if (cat === "ahorro") {
+                return `<svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            } else {
+                return `<svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>`;
+            }
+        }
+
+        // PESTAÑAS INFERIORES
+        function switchTab(tabId) {
+            activeTab = tabId;
+
+            document.getElementById("view-inicio").classList.add("hidden");
+            document.getElementById("view-simular").classList.add("hidden");
+            document.getElementById("view-progreso").classList.add("hidden");
+            document.getElementById("view-config").classList.add("hidden");
+
+            document.getElementById(`view-${tabId}`).classList.remove("hidden");
+
+            const tabs = ["inicio", "simular", "progreso", "config"];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === tabId) {
+                    btn.classList.add("text-blue-600");
+                    btn.classList.remove("text-slate-400");
+                } else {
+                    btn.classList.remove("text-blue-600");
+                    btn.classList.add("text-slate-400");
+                }
+            });
+        }
+
+        // SIMULADORES
+        function switchSimulator(simId) {
+            activeSimulator = simId;
+
+            document.getElementById("sim-ahorro-panel").classList.add("hidden");
+            document.getElementById("sim-presupuesto-panel").classList.add("hidden");
+            document.getElementById("sim-credito-panel").classList.add("hidden");
+
+            document.getElementById(`sim-${simId}-panel`).classList.remove("hidden");
+
+            const sims = ["ahorro", "presupuesto", "credito"];
+            sims.forEach(s => {
+                const btn = document.getElementById(`btn-sim-${s}`);
+                if (s === simId) {
+                    btn.className = "py-2.5 text-xs font-bold rounded-lg bg-white text-slate-900 shadow-sm transition";
+                } else {
+                    btn.className = "py-2.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-950 transition";
+                }
+            });
+        }
+
+        function calcularAhorro() {
+            const meta = parseFloat(document.getElementById("input-ahorro-meta").value);
+            const mensual = parseFloat(document.getElementById("input-ahorro-mensual").value);
+            if (!meta || !mensual || meta <= 0 || mensual <= 0) {
+                showToast("Por favor, ingresa montos válidos mayores a cero.", false);
+                return;
+            }
+
+            const meses = Math.ceil(meta / mensual);
+            const panel = document.getElementById("resultado-ahorro");
+            panel.classList.remove("hidden");
+            document.getElementById("txt-ahorro-meses").innerHTML = `Te tomará exactamente <span class="text-blue-700 font-extrabold">${meses} meses</span> alcanzar tu meta de $${meta.toFixed(2)}.`;
+            showToast("Simulación de ahorro calculada.");
+        }
+
+        function calcularPresupuesto() {
+            const ingreso = parseFloat(document.getElementById("input-presupuesto-ingreso").value);
+            if (!ingreso || ingreso <= 0) {
+                showToast("Por favor, ingresa un ingreso válido.", false);
+                return;
+            }
+
+            const panel = document.getElementById("resultado-presupuesto");
+            panel.classList.remove("hidden");
+
+            document.getElementById("txt-presupuesto-necesidades").innerText = `$${(ingreso * 0.5).toFixed(2)}`;
+            document.getElementById("txt-presupuesto-deseos").innerText = `$${(ingreso * 0.3).toFixed(2)}`;
+            document.getElementById("txt-presupuesto-ahorro").innerText = `$${(ingreso * 0.2).toFixed(2)}`;
+            showToast("Presupuesto distribuido según la regla 50/30/20.");
+        }
+
+        function calcularCredito() {
+            const monto = parseFloat(document.getElementById("input-credito-monto").value);
+            const plazo = parseInt(document.getElementById("input-credito-plazo").value);
+            const interes = parseFloat(document.getElementById("input-credito-interes").value);
+            if (!monto || !plazo || !interes || monto <= 0 || plazo <= 0 || interes <= 0) {
+                showToast("Ingresa todos los datos requeridos para el análisis de crédito.", false);
+                return;
+            }
+
+            const panel = document.getElementById("resultado-credito");
+            panel.classList.remove("hidden");
+
+            const r = (interes / 100) / 12;
+            const cuota = (monto * r * Math.pow(1 + r, plazo)) / (Math.pow(1 + r, plazo) - 1);
+            const totalInteres = (cuota * plazo) - monto;
+
+            document.getElementById("txt-credito-cuota").innerText = `$${cuota.toFixed(2)}/mes`;
+            document.getElementById("txt-credito-intereses-totales").innerText = `$${totalInteres.toFixed(2)}`;
+
+            const alerta = document.getElementById("alerta-endeudamiento");
+            if (cuota > 250) {
+                alerta.className = "p-3 rounded-xl text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-100 mt-2";
+                alerta.innerText = "🚨 ALTA ALERTA DE RIESGO: Esta cuota excede la capacidad de endeudamiento prudente para un presupuesto joven en Panamá. Considera reducir el monto.";
+            } else {
+                alerta.className = "p-3 rounded-xl text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 mt-2";
+                alerta.innerText = "✓ CUOTA SEGURA: La cuota proyectada es manejable bajo presupuestos familiares estándar de nivel inicial.";
+            }
+            showToast("Crédito simulado con éxito.");
+        }
+
+        // REPRODUCTOR MULTIPASO DE CURSOS (2 minutos de lectura interactiva por lección)
+        function startCourse(courseId) {
+            activeCourse = coursesData.find(c => c.id === courseId);
+            currentLessonIndex = 0;
+            selectedOption = null;
+
+            document.getElementById("player-course-title").innerText = activeCourse.title;
+            loadCurrentLessonInPlayer();
+
+            document.getElementById("course-player").classList.remove("hidden");
+        }
+
+        function exitCoursePlayer() {
+            document.getElementById("course-player").classList.add("hidden");
+            activeCourse = null;
+        }
+
+        function loadCurrentLessonInPlayer() {
+            const lesson = activeCourse.lessons[currentLessonIndex];
+            selectedOption = null;
+
+            // Progreso visual superior
+            const currentStep = currentLessonIndex + 1;
+            const totalSteps = activeCourse.lessons.length;
+            document.getElementById("player-progress-subtitle").innerText = `Módulo ${currentStep} de ${totalSteps}`;
+            document.getElementById("player-progress-bar").style.width = `${(currentStep / totalSteps) * 100}%`;
+
+            // Rellenar lección
+            document.getElementById("player-read-time").innerText = lesson.readTime;
+            document.getElementById("player-lesson-title").innerText = lesson.title;
+
+            // Párrafos amplios
+            const bodyContainer = document.getElementById("player-lesson-body");
+            bodyContainer.innerHTML = "";
+            lesson.paragraphs.forEach(p => {
+                const para = document.createElement("p");
+                para.className = "leading-relaxed";
+                para.innerText = p;
+                bodyContainer.appendChild(para);
+            });
+
+            // Pregunta del Quiz
+            document.getElementById("player-quiz-question").innerText = lesson.question;
+
+            // Opciones del Quiz
+            const optionsContainer = document.getElementById("player-quiz-options");
+            optionsContainer.innerHTML = "";
+            lesson.options.forEach((opt, idx) => {
+                const btn = document.createElement("button");
+                btn.className = "w-full text-left p-3.5 rounded-2xl border border-slate-200 text-xs font-semibold hover:bg-slate-50 transition flex items-center gap-3";
+                btn.onclick = () => selectQuizOption(idx, btn);
+                btn.innerHTML = `
+                    <span class="w-5 h-5 rounded-full border border-slate-300 flex items-center justify-center text-[10px] font-bold text-slate-400">${String.fromCharCode(65 + idx)}</span>
+                    <span class="flex-1">${opt}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Resetear retroalimentación y botón inferior
+            document.getElementById("player-quiz-feedback").classList.add("hidden");
+            const actionBtn = document.getElementById("btn-player-action");
+            actionBtn.innerText = "Comprobar Respuesta";
+            actionBtn.className = "w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-xs transition shadow-lg shadow-blue-100 flex items-center justify-center gap-1";
+            
+            // Hacer scroll hacia arriba del reproductor
+            document.getElementById("player-content").scrollTop = 0;
+        }
+
+        function selectQuizOption(index, btnElement) {
+            selectedOption = index;
+
+            const container = document.getElementById("player-quiz-options");
+            Array.from(container.children).forEach(b => {
+                b.className = "w-full text-left p-3.5 rounded-2xl border border-slate-200 text-xs font-semibold hover:bg-slate-50 transition flex items-center gap-3";
+                b.querySelector("span").className = "w-5 h-5 rounded-full border border-slate-300 flex items-center justify-center text-[10px] font-bold text-slate-400";
+            });
+
+            btnElement.className = "w-full text-left p-3.5 rounded-2xl border-2 border-blue-500 bg-blue-50/20 text-xs font-bold transition flex items-center gap-3";
+            btnElement.querySelector("span").className = "w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-[10px] font-bold";
+        }
+
+        function handlePlayerAction() {
+            const actionBtn = document.getElementById("btn-player-action");
+            
+            if (actionBtn.innerText === "Continuar" || actionBtn.innerText === "Finalizar Curso") {
+                advanceLesson();
+                return;
+            }
+
+            if (selectedOption === null) {
+                showToast("Por favor, selecciona una respuesta antes de continuar.", false);
+                return;
+            }
+
+            const lesson = activeCourse.lessons[currentLessonIndex];
+            const feedback = document.getElementById("player-quiz-feedback");
+            feedback.classList.remove("hidden");
+
+            if (selectedOption === lesson.correctAnswer) {
+                feedback.className = "p-4 rounded-2xl text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-100";
+                feedback.innerText = "🎉 ¡EXCELENTE! Respuesta correcta. Has asimilado perfectamente los conceptos de este módulo.";
+                
+                // Bonificación de XP parcial por lección
+                currentUser.xp += 30;
+                saveState();
+                
+                const isLast = (currentLessonIndex + 1) === activeCourse.lessons.length;
+                actionBtn.innerText = isLast ? "Finalizar Curso" : "Continuar";
+                actionBtn.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl text-xs transition shadow-lg flex items-center justify-center gap-1";
+            } else {
+                feedback.className = "p-4 rounded-2xl text-xs font-bold bg-rose-50 text-rose-800 border border-rose-100";
+                feedback.innerText = "❌ RESPUESTA INCORRECTA: Te sugerimos repasar nuevamente la explicación de arriba antes de volver a responder.";
+                showToast("Inténtalo de nuevo.", false);
+            }
+        }
+
+        function advanceLesson() {
+            const totalSteps = activeCourse.lessons.length;
+            if (currentLessonIndex + 1 < totalSteps) {
+                currentLessonIndex++;
+                loadCurrentLessonInPlayer();
+            } else {
+                // Finalizó el curso completo
+                if (!currentUser.completedCourses.includes(activeCourse.id)) {
+                    currentUser.completedCourses.push(activeCourse.id);
+                    currentUser.xp += 100; // Bono extra por finalizar todo el curso
+                    
+                    let newBadge = "Financiero Iniciado";
+                    if (activeCourse.category === "presupuesto") newBadge = "Planificador Financiero";
+                    if (activeCourse.category === "ahorro") newBadge = "Ahorrador Experto";
+                    if (activeCourse.category === "credito") newBadge = "Manejador Seguro de Crédito";
+
+                    if (!currentUser.badges.includes(newBadge)) {
+                        currentUser.badges.push(newBadge);
+                    }
+                    saveState();
+                }
+
+                exitCoursePlayer();
+                renderApp();
+                showToast(`🏆 ¡Felicidades! Completaste el curso "${activeCourse.title}"`);
+            }
+        }
+
+        // AJUSTES DEL PERFIL
+        function updateProfileName() {
+            const nameInput = document.getElementById("input-config-name");
+            currentUser.name = nameInput.value.trim() || "Estudiante";
+            saveState();
+            renderUsersList();
+            renderApp();
+        }
+
+        function setAgeGroup(group) {
+            currentUser.ageGroup = group;
+            saveState();
+            renderUsersList();
+            renderApp();
+            showToast(`Contenido adaptado para: ${group === 'nino' ? 'Niños' : group === 'adolescente' ? 'Jóvenes' : 'Adultos'}`);
+        }
+
+        function updateAgeGroupButtons() {
+            const g = currentUser.ageGroup;
+            const keys = ["nino", "adolescente", "joven"];
+            keys.forEach(k => {
+                const btn = document.getElementById(`btn-age-${k}`);
+                if (k === g) {
+                    btn.className = "py-2.5 text-xs font-bold rounded-lg border-2 border-blue-500 bg-blue-50/50 text-blue-700 font-extrabold transition";
+                } else {
+                    btn.className = "py-2.5 text-xs font-bold rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 transition";
+                }
+            });
+        }
+
+        function resetCurrentUserProgress() {
+            currentUser.completedCourses = [];
+            currentUser.xp = 0;
+            currentUser.badges = [];
+            saveState();
+            renderApp();
+            showToast("Progreso del perfil restablecido.", false);
+        }
+
+        // GENERACIÓN E IMPRESIÓN DE CERTIFICADO DE LOGRO
+        function descargarCertificado() {
+            const dateStr = new Date().toLocaleDateString('es-PA', { year: 'numeric', month: 'long', day: 'numeric' });
+            const win = window.open("", "_blank");
+            win.document.write(`
+                <html>
+                <head>
+                    <title>Certificado - Futuro Financiero</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+                    <style>
+                        body {
+                            font-family: 'Plus Jakarta Sans', sans-serif;
+                            background-color: #f8fafc;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            margin: 0;
+                        }
+                        .certificate {
+                            width: 800px;
+                            height: 550px;
+                            padding: 50px;
+                            background: white;
+                            border: 15px solid #1e3a8a;
+                            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15);
+                            text-align: center;
+                            box-sizing: border-box;
+                            position: relative;
+                        }
+                        .title {
+                            color: #1d4ed8;
+                            font-size: 38px;
+                            font-weight: 800;
+                            text-transform: uppercase;
+                            margin-bottom: 5px;
+                        }
+                        .subtitle {
+                            font-size: 13px;
+                            color: #64748b;
+                            font-weight: 700;
+                            letter-spacing: 5px;
+                            margin-bottom: 45px;
+                        }
+                        .award {
+                            font-size: 14px;
+                            color: #475569;
+                            font-weight: 600;
+                            margin-bottom: 15px;
+                        }
+                        .name {
+                            font-size: 32px;
+                            font-weight: 800;
+                            color: #0f172a;
+                            border-bottom: 3px solid #1d4ed8;
+                            display: inline-block;
+                            padding-bottom: 5px;
+                            margin-bottom: 25px;
+                        }
+                        .desc {
+                            font-size: 13px;
+                            color: #475569;
+                            line-height: 1.6;
+                            max-width: 580px;
+                            margin: 0 auto 40px;
+                        }
+                        .footer {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: flex-end;
+                            padding: 0 40px;
+                        }
+                        .signature {
+                            width: 160px;
+                            border-top: 1px solid #cbd5e1;
+                            font-size: 10px;
+                            color: #64748b;
+                            padding-top: 8px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="certificate">
+                        <div class="title">Futuro Financiero</div>
+                        <div class="subtitle">PANAMÁ</div>
+                        <div class="award">OTORGA EL PRESENTE CERTIFICADO DE LOGRO COMPLETO A:</div>
+                        <div class="name">${currentUser.name}</div>
+                        <div class="desc">
+                            Por haber demostrado perseverancia, responder con éxito todas las evaluaciones interactivas y adquirir sólidas competencias sobre presupuestos inteligentes, control de deudas, hábitos de ahorro sistemáticos y uso responsable de herramientas financieras en Panamá.
+                        </div>
+                        <div class="footer">
+                            <div class="signature">
+                                <b>Futuro Financiero Panamá</b><br>Desarrollo Educativo
+                            </div>
+                            <div style="font-size: 11px; color: #475569;">
+                                Fecha de Emisión:<br>
+                                <b>${dateStr}</b>
+                            </div>
+                            <div class="signature">
+                                <b>Certificado Auténtico</b><br>Cód. Registro: PAN-${currentUser.id.toUpperCase()}
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                        }
+                    <\/script>
+                </body>
+                </html>
+            `);
+            win.document.close();
+        }
+    </script>
+</body>
+</html>
